@@ -20,24 +20,24 @@ class Board:
     def white_pieces(self):
         
         
-        self.w_p_4 = Pawn([0,5],True,chrs['w_pawn'])
+        self.w_p_4 = Pawn([2,5],True,chrs['w_pawn'])
         val = self.w_p_4.get_place()
         self.board[val[0]][val[1]] = self.w_p_4
         
-        self.w_p_5 = Pawn([4,7],True,chrs['w_pawn'])
+        self.w_p_5 = Pawn([5,6],False,chrs['w_pawn'])
         val = self.w_p_5.get_place()
         self.board[val[0]][val[1]] = self.w_p_5
         
-        self.w_p_6 = Pawn([3,0],True,chrs['w_pawn'])
+        self.w_p_6 = Pawn([7,5],True,chrs['w_pawn'])
         val = self.w_p_6.get_place()
         self.board[val[0]][val[1]] = self.w_p_6
         
-        self.w_p_7 = Pawn([7,3],True,chrs['w_pawn'])
+        self.w_p_7 = Pawn([4,3],True,chrs['w_pawn'])
         val = self.w_p_7.get_place()
         self.board[val[0]][val[1]] = self.w_p_7
         
     def black_pieces(self):
-        self.b_r_1 = Rook([7,0],False,chrs['b_rook'])
+        self.b_r_1 = Rook([5,5],False,chrs['b_rook'])
         val = self.b_r_1.get_place()
         self.board[val[0]][val[1]] = self.b_r_1
         
@@ -50,7 +50,8 @@ class Board:
                     pass
                 else:
                     self.board_view[y][x] = self.board[y][x].get_shape()
-
+        
+        #Board Shape in game
         for i in range(8):
             print(self.board_view[i])
             
@@ -67,11 +68,9 @@ class Board:
     
     def pre_move(self,y,x):
         piece = self.board[y][x]
-        to_remove = []
         move_limit = [0,0,0,0]
         piece.pre_move()
-        posibilities = piece.get_move_options()
-       
+        posibilities = piece.get_move_options()  
         pos = 0  
         for dir in posibilities:
             for val in dir:
@@ -80,27 +79,28 @@ class Board:
                     move_limit[pos] = val
                     break
             pos +=1
-        
-        
+
         for val in range(len(move_limit)):
             if posibilities[val] == []:
                 move_limit[val] = False
             elif move_limit[val] == 0:
                 move_limit[val] = posibilities[val][-1]
     
-        print(posibilities)
-        print(move_limit)
         piece.move_limits(move_limit)
-        # pre_limit_real = piece.get_move_limit()
-        #print(pre_limit_real)
-        # for atack in move_limit:
-        #     limit_color = self.board[atack[0]][atack[1]].get_color()
-        #     if limit_color == piece.get_color():
-        #         to_remove.append(atack)
-        # for remove in to_remove:
-        #     pre_limit_real.remove(remove)
-        # piece.set_move_limit(pre_limit_real)
-        
+        pre_limit_real = piece.get_move_options() 
+        for atack in move_limit:
+            pos = move_limit.index(atack)
+            try:
+                limit_color = self.board[atack[0]][atack[1]].get_color()
+            except:
+                color = piece.get_color()
+                if color:
+                    limit_color = False
+                else:
+                    limit_color = True
+            if limit_color == piece.get_color():
+                pre_limit_real[pos].remove(atack)
+        piece.set_move_options(pre_limit_real)
         
     def move(self,y,x,move: list):
         self.pre_move(y,x)
@@ -125,4 +125,4 @@ class Board:
         
 game = Board()
 
-game.move_from_to((7,0),(0,1))
+game.move_from_to((5,5),(5,0))
