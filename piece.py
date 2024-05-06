@@ -155,37 +155,38 @@ class Rook(Piece):
     
     def pre_move(self):
         place = self.get_place()
-        to_remove = []
         y = place[0]
         x = place[1]
         self.move_options = [[],[],[],[]]
-        for add in range(BOARD_SIZE):
-            add +=1
-            self.move_options[0].append((y-add,x))
-        for add in range(BOARD_SIZE):
-            add +=1
-            self.move_options[1].append((y,x+add))
-        for add in range(BOARD_SIZE):
-            add +=1
-            self.move_options[2].append((y+add,x))
-        for add in range(BOARD_SIZE):
-            add +=1
-            self.move_options[3].append((y,x-add))
-        for place in self.move_options:
-            if place[0][0]<=-1 or place[0][1]<=-1 or (place[0][0]>=BOARD_SIZE) or (place[0][1]>=BOARD_SIZE):
-                to_remove.append(place)       
-        for delete in to_remove:
-            self.move_options.remove(delete)
+        for mov in range(4):
+            for add in range(BOARD_SIZE):
+                add +=1
+                if mov == 0:
+                    self.move_options[mov].append((y-add,x))
+                elif mov == 1:
+                    self.move_options[mov].append((y,x+add))
+                elif mov == 2:
+                    self.move_options[mov].append((y+add,x))
+                elif mov == 3:
+                    self.move_options[mov].append((y,x-add))
+                    
+                place = self.move_options[mov][-1]       
+                if place[0]<=-1 or place[1]<=-1 or (place[0]>=BOARD_SIZE) or (place[1]>=BOARD_SIZE):
+                    self.move_options[mov].remove(place) 
+        
+           
         
     
     def move_limits(self,limits:list):
         moves_allowed = []
-        for vars in range(len(limits)):
-            limit = limits[vars]
-            for vals in self.move_options[vars]: 
-                if (limit[0]>=vals[0] and limit[1]>=vals[1]):
-                    moves_allowed.append(vals)
-        self.move_limit = moves_allowed
+        for vars in range(4):
+            for limit in limits:
+                pass
+           # for vals in self.move_options[vars]: 
+                # print(vals)
+        #         if (limit[0]>=vals[0] and limit[1]>=vals[1]):
+        #             moves_allowed.append(vals)
+        # self.move_limit = moves_allowed
   
     def move(self,move):
         for pre_move in self.move_limit:
