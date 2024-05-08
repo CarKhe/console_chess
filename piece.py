@@ -49,34 +49,55 @@ class Piece:
 class King(Piece):
     def __init__(self,place: list,color: bool,shape:str):
         super().__init__(place, color, shape)
-        self.move_options = ""
+        self.move_limit = []
     
     def get_move_options(self):
         return self.move_options
     
+    def set_move_options(self,moves: list):
+        self.move_options = moves
+    
     def pre_move(self):
         place = self.get_place()
         to_remove = []
-        y= place[0]
+        y = place[0]
         x = place[1]
-        self.move_options = [[y-1,x-1],
-            [y-1,x],[y-1,x+1],[y,x-1],[y,x+1],[y+1,x-1]
-            ,[y+1,x],[y+1,x+1]]
-        for place in self.move_options:
-            if place[0]<=-1 or place[1]<=-1 or (place[0]>=BOARD_SIZE) or (place[1]>=BOARD_SIZE):
-                to_remove.append(place)
+        self.move_options = [[(y-1,x-1)],
+            [(y-1,x)],[(y-1,x+1)],[(y,x-1)],[(y,x+1)],[(y+1,x-1)]
+            ,[(y+1,x)],[(y+1,x+1)]]
+    
+        for mov in self.move_options:
+            for place in mov:
+                if place[0]<=-1 or place[1]<=-1 or (place[0]>=BOARD_SIZE) or (place[1]>=BOARD_SIZE):
+                    to_remove.append(place)       
         for delete in to_remove:
             self.move_options.remove(delete)
+            
+    def move_limits(self,limits:list):
+        moves_allowed = [[],[],[],[],[],[],[],[]]
+        for limit in limits:
+            if limit == False:
+                break
+            pos = limits.index(limit)
+           
+            for vals in self.move_options[pos]:
+                if (limit[0]==vals[0] and limit[1]==vals[1]):
+                    moves_allowed[pos].append(vals)
+                    break
+                else:
+                    moves_allowed[pos].append(vals)
+        self.move_options = moves_allowed
         
-        
+            
+            
     def move(self,move):
-        self.pre_move()
-        for pre_move in self.move_options:
-            if pre_move == move:
-                self.set_place(move)
-                return True
-            else:
-                continue 
+        for place in self.move_options:
+            for pre_move in place:
+                if pre_move == move:
+                    self.set_place(move)
+                    return True
+                else:
+                    continue 
         return False
     
     def castle(self,move):
@@ -93,9 +114,13 @@ class Pawn(Piece):
     def __init__(self,place: list,color: bool,shape:str):
         super().__init__(place, color, shape)
         self.move_options = ""
-        
+        self.move_limit = []
+             
     def get_move_options(self):
         return self.move_options
+    
+    def set_move_options(self,moves: list):
+        self.move_options = moves
     
     def pre_move(self):
         place = self.get_place()
@@ -103,23 +128,42 @@ class Pawn(Piece):
         y = place[0]
         x = place[1]
         if self.get_color(): 
-            self.move_options = [[y-1,x-1],[y-1,x],[y-1,x+1]]
+            self.move_options = [[(y-1,x-1)],[(y-1,x)],[(y-1,x+1)]]
         else:
-            self.move_options = [[y+1,x-1],[y+1,x],[y+1,x+1]]
-        for place in self.move_options:
-            if place[0]<=-1 or place[1]<=-1 or (place[0]>=BOARD_SIZE) or (place[1]>=BOARD_SIZE):
-                to_remove.append(place)       
+            self.move_options = [[(y+1,x-1)],[(y+1,x)],[(y+1,x+1)]]
+    
+        for mov in self.move_options:
+            for place in mov:
+                if place[0]<=-1 or place[1]<=-1 or (place[0]>=BOARD_SIZE) or (place[1]>=BOARD_SIZE):
+                    to_remove.append(place)       
         for delete in to_remove:
             self.move_options.remove(delete)
             
+    def move_limits(self,limits:list):
+        moves_allowed = [[],[],[]]
+        for limit in limits:
+            if limit == False:
+                break
+            pos = limits.index(limit)
+           
+            for vals in self.move_options[pos]:
+                if (limit[0]==vals[0] and limit[1]==vals[1]):
+                    moves_allowed[pos].append(vals)
+                    break
+                else:
+                    moves_allowed[pos].append(vals)
+        self.move_options = moves_allowed
+        
+            
+            
     def move(self,move):
-        self.pre_move()
-        for pre_move in self.move_options:
-            if pre_move == move:
-                self.set_place(move)
-                return True
-            else:
-                continue 
+        for place in self.move_options:
+            for pre_move in place:
+                if pre_move == move:
+                    self.set_place(move)
+                    return True
+                else:
+                    continue 
         return False
     
     def double_move(self):

@@ -107,3 +107,6 @@
         # self.w_p_3 = Pawn([6,3],True,chrs['w_pawn'])
         # val = self.w_p_3.get_place()
         # self.board[val[0]][val[1]] = self.w_p_3
+        
+        
+          

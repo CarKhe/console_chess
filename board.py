@@ -37,7 +37,7 @@ class Board:
         self.board[val[0]][val[1]] = self.w_p_7
         
     def black_pieces(self):
-        self.b_r_1 = Queen([3,3],False,chrs['b_queen'])
+        self.b_r_1 = Pawn([1,1],False,chrs['b_pawn'])
         val = self.b_r_1.get_place()
         self.board[val[0]][val[1]] = self.b_r_1
         
@@ -68,8 +68,10 @@ class Board:
     
     def pre_move(self,y,x):
         piece = self.board[y][x]
-        if type(piece) is Queen:
+        if type(piece) is Queen or type(piece) is King:
             move_limit = [0,0,0,0,0,0,0,0]
+        elif type(piece) is  Pawn:
+            move_limit = [0,0,0]
         else:
             move_limit = [0,0,0,0]
         piece.pre_move()
@@ -130,7 +132,7 @@ class Board:
         
 game = Board()
 
-game.move_from_to((3,3),(0,0))
+game.move_from_to((1,1),(2,2))
 
 
 
